@@ -14,7 +14,7 @@ export class TabsPage implements OnInit {
   static username: string;
   public PatientName: string;
   private postFeedback: string;
-  private temp: string;
+  private flag = false;
   private DeviceID: string;
 
   constructor(private http: HttpClient, public alertCtrl: AlertController) {}
@@ -24,11 +24,10 @@ export class TabsPage implements OnInit {
 
     try {
       this.checkPatient(this.DeviceID).subscribe(
-          data => {this.PatientName = data; console.log(this.PatientName);},
+          data => {this.PatientName = data; this.flag = true; console.log("log in successfully: " , this.PatientName);},
           async error => {
             console.log('HttpClient get checkPatient error');
             this.showPrompt();
-
           }
       );
     }catch (e) {
@@ -102,7 +101,7 @@ export class TabsPage implements OnInit {
     // this.getuuid();
     this.DeviceID = '33c-hl';
     TabsPage.deviceId = this.DeviceID;
-    this.login();
+      this.login();
     console.log("TabsPage.uuid : " , TabsPage.deviceId);
   }
 

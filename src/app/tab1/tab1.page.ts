@@ -27,10 +27,11 @@ export class Tab1Page {
 
   submitData() {
     this.event.EventDate = new Date(this.event.EventDate).toLocaleDateString();
-
     let newday = new Date(this.event.EventDate + ' ' + this.event.EventTime);
     let UTCdate = newday.getUTCFullYear() + '/' + (newday.getUTCMonth() + 1) + '/' + newday.getUTCDate();
     let UTCtime = ((newday.getUTCHours()<10?'0':'') + newday.getUTCHours() )+ ':' + ((newday.getUTCMinutes()<10?'0':'') + newday.getUTCMinutes());
+    let tempDate = new Date(this.event.EventDate);
+    let userDate = tempDate.getUTCFullYear() + '/' + (tempDate.getUTCMonth() + 1) + '/' + tempDate.getUTCDate();
     console.log(
         newday,
         "\n",
@@ -39,7 +40,7 @@ export class Tab1Page {
         "UTC : EventDate : " + UTCdate  + ", EventTime : " + UTCtime + ", EventLoc : " + this.event.EventLoc + ", uuid : " + TabsPage.deviceId,
     )
 
-    this.submitRequest(UTCdate, UTCtime, this.event.EventLoc)
+    this.submitRequest(UTCdate, UTCtime, this.event.EventLoc, userDate)
         .subscribe(
             result => {
                     console.log(result);
@@ -48,13 +49,14 @@ export class Tab1Page {
         );
   }
 
-  submitRequest(EventDate: string, EventTime: string, EventLoc: string) {
+  submitRequest(EventDate: string, EventTime: string, EventLoc: string, userDate: string) {
     return this.http.post<string>(
         'https://stormy-dawn-15351.herokuapp.com/newAttack?' +
         'attackDate=' + EventDate +
         '&attackTime=' + EventTime +
         '&attackLocation=' + EventLoc +
-        '&uuid=' + TabsPage.deviceId,
+        '&uuid=' + TabsPage.deviceId +
+        '&userDate=' + userDate,
         null,
         {responseType: 'text' as 'json' });
   }
