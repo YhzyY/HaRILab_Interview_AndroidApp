@@ -40,10 +40,12 @@ export class Tab1Page {
     )
 
     this.submitRequest(UTCdate, UTCtime, this.event.EventLoc)
-        .subscribe(result => {
-          console.log(result);
-          this.submitFeedback(result)
-        });
+        .subscribe(
+            result => {
+                    console.log(result);
+                    this.submitFeedback(result).then(r => {});},
+            error=>{console.log(error)}
+        );
   }
 
   submitRequest(EventDate: string, EventTime: string, EventLoc: string) {
@@ -57,11 +59,21 @@ export class Tab1Page {
         {responseType: 'text' as 'json' });
   }
 
-  submitFeedback(result: string){
-    if(result == 'new attack is added'){
-      console.log('result check true successful')
-    }else{
-      console.log('result check false successful')
+  async submitFeedback(result: string) {
+    if (result == 'new attack is added') {
+      const alert = await this.alertCtrl.create({
+        header: 'Feedback',
+        message: 'new attack is added!',
+        buttons: ['OK']
+      });
+      await alert.present();
+    } else {
+      const alert = await this.alertCtrl.create({
+        header: 'Feedback',
+        message: 'duplicate attack!',
+        buttons: ['OK']
+      });
+      await alert.present();
     }
 
   }
