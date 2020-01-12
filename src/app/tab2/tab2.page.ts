@@ -1,30 +1,31 @@
 import {Component, OnInit} from '@angular/core';
+import {TabsPage} from "../tabs/tabs.page";
+import {HttpClient} from "@angular/common/http";
+import {AlertController} from "@ionic/angular";
+
+interface attackInfo {
+  attackDate: string
+  attackTime: string
+  attackLocation: string
+  uuid : string
+  id: number
+}
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
+
 export class Tab2Page implements OnInit {
+
   action: string;
-  attack1 = {
-    id : 1,
-    date : "2020/1/1",
-    time : "12:12",
-    action: ''
-  }
-  attack2 = {
-    id : 2,
-    date : "2020/1/5",
-    time : "20:20",
-    action: ''
-  }
-  attacks = [this.attack1, this.attack2];
+  attackList: attackInfo[];
 
-
-  constructor() {}
+  constructor(private http: HttpClient, public alertCtrl: AlertController) {}
 
   ngOnInit(): void {
+    this.loadData();
 
   }
 
@@ -36,4 +37,27 @@ export class Tab2Page implements OnInit {
     }
 
   }
+
+   loadData() {
+    this.requestData().subscribe(result => {
+      // console.log(result);
+      this.parseJSON(result);
+    })
+  }
+
+  requestData(){
+    return this.http.get<string>(
+        'https://stormy-dawn-15351.herokuapp.com/todayAttacks?' +
+        'today=' + new Date().toLocaleDateString() +
+        '&uuid=' + TabsPage.deviceId,
+        {responseType: 'json' });
+  }
+
+  parseJSON(result: string){
+    console.log(JSON.stringify(result));
+    this.attackList = <attackInfo[]>JSON.parse(JSON.stringify(result));
+    // console.log(this.attackList[2].attackDate);
+  }
+
+
 }
