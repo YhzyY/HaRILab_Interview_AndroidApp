@@ -10,10 +10,12 @@ import {AlertController} from "@ionic/angular";
   styleUrls: ['tabs.page.scss']
 })
 export class TabsPage implements OnInit {
-  private DeviceID: string;
-  private PatientName: string;
+  static deviceId: string;
+  static username: string;
+  public PatientName: string;
   private postFeedback: string;
   private temp: string;
+  private DeviceID: string;
 
   constructor(private http: HttpClient, public alertCtrl: AlertController) {}
   // constructor(private uniqueDeviceID: UniqueDeviceID, private http: HttpClient) {}
@@ -37,7 +39,7 @@ export class TabsPage implements OnInit {
   // getuuid(): void{
   //   // console.info(device.uuid);
   //   this.uniqueDeviceID.get()
-  //       .then((uuid: any) => {console.log(uuid); this.DeviceID = uuid})
+  //       .then((uuid: any) => {console.log(uuid); this.DeviceID = uuid; TabsPage.deviceId = uuid})
   //       .catch((error: any) => console.log(error));
   // }
 
@@ -75,7 +77,11 @@ export class TabsPage implements OnInit {
         }
       ]
     });
-    prompt.onDidDismiss().then(() => this.signup(this.PatientName, this.DeviceID));
+    prompt.onDidDismiss().then(() => {
+      this.signup(this.PatientName, this.DeviceID);
+      TabsPage.deviceId = this.DeviceID;
+      TabsPage.username = this.PatientName
+    });
     await prompt.present();
   }
 
@@ -94,8 +100,10 @@ export class TabsPage implements OnInit {
 
   ngOnInit(): void {
     // this.getuuid();
-    this.DeviceID = '33clhl';
+    this.DeviceID = '33c-hl';
+    TabsPage.deviceId = this.DeviceID;
     this.login();
+    console.log("TabsPage.uuid : " , TabsPage.deviceId);
   }
 
 }

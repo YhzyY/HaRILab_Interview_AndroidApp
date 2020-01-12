@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-    <ion-list lines="none">
+    <ion-list>
       <ion-list-header>
         <ion-label>Attack Info</ion-label>
       </ion-list-header>
@@ -19,7 +19,7 @@
 
       <ion-item>
         <ion-label>Start Time</ion-label>
-        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="event.EventTime"></ion-datetime>
+        <ion-datetime displayFormat="HH:mm" pickerFormat="HH:mm" [(ngModel)]="event.EventTime"></ion-datetime>
       </ion-item>
 
       <ion-item>
