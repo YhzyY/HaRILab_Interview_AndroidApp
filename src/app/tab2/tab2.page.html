@@ -8,22 +8,14 @@
 
 <ion-content>
 
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
 
   <ion-list>
-
-<!--    <ion-item>-->
-<!--      <ion-label>Attack Info</ion-label>-->
-<!--      <ion-select [(ngModel)]="action" interface="action-sheet" (ionChange)="attackAction()">-->
-<!--        <ion-select-option value="edit">Edit</ion-select-option>-->
-<!--        <ion-select-option value="delete">Delete</ion-select-option>-->
-<!--      </ion-select>-->
-<!--    </ion-item>-->
-<!--  </ion-list>-->
-
-
     <ion-item *ngFor="let attack of attackList">
-      <ion-label>{{'No.' + attack.id + '  Time:' + attack.attackDate + ' ' + attack.attackTime + '  Location: ' + attack.attackLocation}}</ion-label>
-      <ion-select [(ngModel)]="action" interface="action-sheet" (ionChange)="attackAction(attack.id)">
+      <ion-label>{{'No.' + attack.id + ' ' + 'Time:' + getLocaltime(attack.attackDate, attack.attackTime) + '     Location: ' + attack.attackLocation}}</ion-label>
+      <ion-select [(ngModel)]="action[attack.id]" interface="action-sheet" (ionChange)="attackAction(attack.id)">
         <ion-select-option value="edit">Edit</ion-select-option>
         <ion-select-option value="delete">Delete</ion-select-option>
       </ion-select>

@@ -9,6 +9,7 @@ interface attackInfo {
   attackLocation: string
   uuid : string
   id: number
+  localTime: string
 }
 
 @Component({
@@ -19,8 +20,9 @@ interface attackInfo {
 
 export class Tab2Page implements OnInit {
 
-  action: string;
+
   attackList: attackInfo[];
+  action = [];
 
   constructor(private http: HttpClient, public alertCtrl: AlertController) {}
 
@@ -30,17 +32,16 @@ export class Tab2Page implements OnInit {
   }
 
   attackAction(id: number) {
-    if (this.action == 'edit'){
+    if (this.action[id] == 'edit'){
       console.log(id , "edit clicked ");
-    }else if (this.action == 'delete'){
+    }else if (this.action[id] == 'delete'){
       console.log(id , "delete clicked ");
     }
 
   }
 
-   loadData() {
+  loadData() {
     this.requestData().subscribe(result => {
-      // console.log(result);
       this.parseJSON(result);
     })
   }
@@ -56,7 +57,22 @@ export class Tab2Page implements OnInit {
   parseJSON(result: string){
     console.log(JSON.stringify(result));
     this.attackList = <attackInfo[]>JSON.parse(JSON.stringify(result));
-    // console.log(this.attackList[2].attackDate);
+  }
+
+  getLocaltime( attackDate: string, attackTime: string) : string{
+    let timeString = attackDate +'T' +  attackTime + 'Z';
+    // console.log(timeString);
+    // console.log(new Date(timeString));
+    return new Date(timeString).toLocaleString();
+  }
+
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.loadData();
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 300);
   }
 
 
