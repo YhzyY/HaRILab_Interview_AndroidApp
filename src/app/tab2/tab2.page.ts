@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {TabsPage} from "../tabs/tabs.page";
 import {HttpClient} from "@angular/common/http";
-import {AlertController} from "@ionic/angular";
+import {AlertController, ToastController} from "@ionic/angular";
 
 interface attackInfo {
   attackDate: string
@@ -27,7 +27,7 @@ export class Tab2Page implements OnInit {
   private tempTime: any;
   private tempLoc: any;
 
-  constructor(private http: HttpClient, public alertCtrl: AlertController) {}
+  constructor(private http: HttpClient, public alertCtrl: AlertController, public toastController: ToastController) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -38,7 +38,7 @@ export class Tab2Page implements OnInit {
     if (this.action[id] == 'edit'){
       console.log(id , "edit clicked ");
       this.editTimeAlert(id).then();
-      // this.loadData();
+      this.refreshPage();
     }else if (this.action[id] == 'delete'){
       console.log(id , "delete clicked ");
       this.deleteAttack(id);
@@ -97,8 +97,8 @@ export class Tab2Page implements OnInit {
         },
         {
           name: 'newTime',
-          type: 'time',
-          // placeholder: "HH:MM AM/PM"
+          type: 'text',
+          placeholder: "HH:MM"
           // placeholder : this.attackList[id].attackTime
         }
       ],
@@ -168,18 +168,31 @@ export class Tab2Page implements OnInit {
 
 
   editAttack(id: number) {
-    if(this.tempDate == '' || this.tempTime == '' || this.tempLoc == '' ) {
-      console.log("invalid input" );
-    }
-    else{
-      console.log('this.tempDate', this.tempDate, 'this.tempTime', this.tempTime);
-      console.log('this.tempLoc', this.tempLoc);
-    }
+      // console.log('this.tempDate', this.tempDate, 'this.tempTime', this.tempTime);
+      // console.log('this.tempLoc', this.tempLoc);
+      this.editAttackRequest(id).subscribe(
+          result =>{this.refreshPage()},
+              error => {this.presentToast("invalid input").then(r => {})});
 
   }
 
-  editAttackRequest(){
+  editAttackRequest(id){
+    try{
+      let newday = new Date(this.tempDate + ' ' + this.tempTime);
+      let UTCdate = newday.getUTCFullYear() + '/' + (newday.getUTCMonth() + 1) + '/' + newday.getUTCDate();
+      let UTCtime = ((newday.getUTCHours()<10?'0':'') + newday.getUTCHours() )+ ':' + ((newday.getUTCMinutes()<10?'0':'') + newday.getUTCMinutes());
+      let userdate = new Date(this.tempDate);
+      let userDate = userdate.getUTCFullYear() + '/' + (userdate.getUTCMonth() + 1) + '/' + userdate.getUTCDate();
+      return this.http.put<string>(
+          'https://stormy-dawn-15351.herokuapp.com/modifyAttack?' +
+          'attackDate=' + UTCdate + '&attackTime=' + UTCtime + '&attackLocation=' + this.tempLoc + '&id=' + id + '&userDate=' + userDate ,
+          null,
+          {responseType: 'text' as 'json' });
+    }catch (e) {
+      this.presentToast("invalid input").then(r => {});
+      console.log("invalid input" );
 
+    }
   }
 
   private deleteAttack(id: number) {
@@ -206,5 +219,13 @@ export class Tab2Page implements OnInit {
   refreshPage() {
     this.ionViewWillEnter();
     this.ionViewDidLoad();
+  }
+
+  async presentToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 2000
+    });
+    await toast.present();
   }
 }
