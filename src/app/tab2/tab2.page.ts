@@ -23,6 +23,9 @@ export class Tab2Page implements OnInit {
 
   attackList: attackInfo[];
   action = [];
+  private tempDate: any;
+  private tempTime: any;
+  private tempLoc: any;
 
   constructor(private http: HttpClient, public alertCtrl: AlertController) {}
 
@@ -34,8 +37,12 @@ export class Tab2Page implements OnInit {
   attackAction(id: number) {
     if (this.action[id] == 'edit'){
       console.log(id , "edit clicked ");
+      this.editTimeAlert(id).then();
+      // this.loadData();
     }else if (this.action[id] == 'delete'){
       console.log(id , "delete clicked ");
+      this.deleteAttack(id);
+      this.refreshPage();
     }
 
   }
@@ -68,6 +75,7 @@ export class Tab2Page implements OnInit {
 
   doRefresh(event) {
     console.log('Begin async operation');
+    this.action = [];
     this.loadData();
     setTimeout(() => {
       console.log('Async operation has ended');
@@ -76,4 +84,127 @@ export class Tab2Page implements OnInit {
   }
 
 
+  async editTimeAlert(id: number) {
+
+    // console.log(id, '-------' , this.attackList[id]);
+    const Timealert = await this.alertCtrl.create({
+      header: 'Edit Attack',
+      inputs: [
+        {
+          name: 'newDate',
+          type: 'date',
+          // placeholder : this.attackList[id].attackDate
+        },
+        {
+          name: 'newTime',
+          type: 'time',
+          // placeholder: "HH:MM AM/PM"
+          // placeholder : this.attackList[id].attackTime
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: data => {
+            this.tempDate = JSON.parse(JSON.stringify(data)).newDate;
+            this.tempTime = JSON.parse(JSON.stringify(data)).newTime;
+            console.log('Confirm Ok');
+            this.editLocAlert(id);
+          }
+        }
+      ]
+    });
+    await Timealert.present();
+  }
+
+
+  async editLocAlert(id: number) {
+    const Localert = await this.alertCtrl.create({
+      header: 'Edit Attack',
+      inputs: [
+        {
+          // name: 'newLoc',
+          label: 'inside',
+          value: 'inside',
+          type: 'radio',
+          checked: true
+        },
+        {
+          // name: 'newLoc',
+          label: 'outside',
+          value: 'outside',
+          type: 'radio',
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: data => {
+            this.tempLoc = JSON.parse(JSON.stringify(data));
+            console.log('Confirm Ok');
+          }
+        }
+      ]
+    });
+    Localert.onDidDismiss().then(()=>
+        this.editAttack(id)
+    );
+    await Localert.present();
+  }
+
+
+  editAttack(id: number) {
+    if(this.tempDate == '' || this.tempTime == '' || this.tempLoc == '' ) {
+      console.log("invalid input" );
+    }
+    else{
+      console.log('this.tempDate', this.tempDate, 'this.tempTime', this.tempTime);
+      console.log('this.tempLoc', this.tempLoc);
+    }
+
+  }
+
+  editAttackRequest(){
+
+  }
+
+  private deleteAttack(id: number) {
+      this.deleteAttackRequest(id).subscribe( result =>{});
+          // result => {console.log(result)},
+          // error=>{console.log(error)});
+  }
+
+  deleteAttackRequest(id: number){
+    return this.http.delete<string>(
+        'https://stormy-dawn-15351.herokuapp.com/deleteAttack?' +
+        'id=' + id,
+        {responseType: 'text' as 'json' });
+  }
+
+  ionViewWillEnter(){
+    this.loadData();
+  }
+
+  ionViewDidLoad(){
+    this.loadData();
+  }
+
+  refreshPage() {
+    this.ionViewWillEnter();
+    this.ionViewDidLoad();
+  }
 }
