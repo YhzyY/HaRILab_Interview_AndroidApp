@@ -171,7 +171,9 @@ export class Tab2Page implements OnInit {
       // console.log('this.tempDate', this.tempDate, 'this.tempTime', this.tempTime);
       // console.log('this.tempLoc', this.tempLoc);
       this.editAttackRequest(id).subscribe(
-          result =>{this.refreshPage()},
+          result =>{
+            this.refreshPage();
+            this.presentToast("edited successfully").then(r => {})},
               error => {this.presentToast("invalid input").then(r => {})});
 
   }
