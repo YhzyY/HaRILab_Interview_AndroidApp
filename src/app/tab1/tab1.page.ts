@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {AlertController} from "@ionic/angular";
 import {TabsPage} from "../tabs/tabs.page";
@@ -8,7 +8,9 @@ import {TabsPage} from "../tabs/tabs.page";
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit{
+  private username: string;
+
 
   constructor(private http: HttpClient, public alertCtrl: AlertController) {}
 
@@ -23,6 +25,8 @@ export class Tab1Page {
     this.event.EventDate = new Date().toLocaleDateString();
     this.event.EventTime = new Date().getHours() + ":" + (new Date().getMinutes()<10?'0':'') + new Date().getMinutes();
     this.event.EventLoc = 'inside';
+
+    console.log((TabsPage.username));
   }
 
   submitData() {
@@ -78,5 +82,22 @@ export class Tab1Page {
       await alert.present();
     }
 
+  }
+
+  ngOnInit(): void {
+    console.log((TabsPage.username));
+    this.username = TabsPage.username;
+    // this.username = PatientName;
+    console.log((this.username));
+  }
+
+  ionViewWillEnter(){
+    console.log((TabsPage.username));
+    this.username = TabsPage.username;
+  }
+
+  ionViewDidLoad(){
+    console.log((TabsPage.username));
+    this.username = TabsPage.username;
   }
 }

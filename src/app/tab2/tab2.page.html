@@ -14,7 +14,7 @@
 
   <ion-list>
     <ion-item *ngFor="let attack of attackList">
-      <ion-label>{{'No.' + attack.id + ' ' + 'Time:' + getLocaltime(attack.attackDate, attack.attackTime) + '     Location: ' + attack.attackLocation}}</ion-label>
+      <ion-label>{{'Time:' + getLocaltime(attack.attackDate, attack.attackTime) + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Loc: ' + attack.attackLocation}}</ion-label>
       <ion-select [(ngModel)]="action[attack.id]" interface="action-sheet" (ionChange)="attackAction(attack.id)">
         <ion-select-option value="edit">Edit</ion-select-option>
         <ion-select-option value="delete">Delete</ion-select-option>

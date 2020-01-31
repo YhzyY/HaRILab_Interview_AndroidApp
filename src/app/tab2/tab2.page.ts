@@ -56,7 +56,7 @@ export class Tab2Page implements OnInit {
   requestData(){
     return this.http.get<string>(
         'https://stormy-dawn-15351.herokuapp.com/todayAttacks?' +
-        'today=' + new Date().toLocaleDateString() +
+        'today=' + new Date().getFullYear()+'/'+ (new Date().getMonth() + 1)+'/'+new Date().getDate() +
         '&uuid=' + TabsPage.deviceId,
         {responseType: 'json' });
   }
@@ -97,7 +97,7 @@ export class Tab2Page implements OnInit {
         },
         {
           name: 'newTime',
-          type: 'text',
+          type: 'time',
           placeholder: "HH:MM"
           // placeholder : this.attackList[id].attackTime
         }
@@ -173,8 +173,8 @@ export class Tab2Page implements OnInit {
       this.editAttackRequest(id).subscribe(
           result =>{
             this.refreshPage();
-            this.presentToast("edited successfully").then(r => {})},
-              error => {this.presentToast("invalid input").then(r => {})});
+            this.presentToast("edited successfully")},
+              error => {this.presentToast("invalid input")});
 
   }
 
@@ -191,7 +191,7 @@ export class Tab2Page implements OnInit {
           null,
           {responseType: 'text' as 'json' });
     }catch (e) {
-      this.presentToast("invalid input").then(r => {});
+      this.presentToast("invalid input");
       console.log("invalid input" );
 
     }

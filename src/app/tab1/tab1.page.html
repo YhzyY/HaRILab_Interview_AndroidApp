@@ -1,16 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Report Attack
+      Hello, {{this.username}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
     <ion-list>
-      <ion-list-header>
-        <ion-label>Attack Info</ion-label>
-      </ion-list-header>
+<!--      <ion-list-header>-->
+<!--        <ion-label style="align-content: center">Hello, {{this.username}}</ion-label>-->
+<!--      </ion-list-header>-->
 
       <ion-item>
         <ion-label>Start Date</ion-label>
@@ -30,10 +31,10 @@
         </ion-select>
       </ion-item>
 
-
-      <button ion-button round (click)="clearData()">Clear</button>
-      <br>
-      <button ion-button round (click)="submitData()">Submit</button>
+      <br><br>
+      <button ion-button (click)="clearData()">Clear</button>
+      <br><br><br>
+      <button ion-button (click)="submitData()" >Submit</button>
 
     </ion-list>
 

@@ -77,7 +77,7 @@ export class Tab3Page implements OnInit{
   requestReportData(){
     return this.http.get<string>(
         'https://stormy-dawn-15351.herokuapp.com/userAttacksReport?' +
-        'userday=' + new Date().toLocaleDateString() +
+        'userday=' + new Date().getFullYear()+'/'+ (new Date().getMonth() + 1)+'/'+new Date().getDate() +
         '&uuid=' + TabsPage.deviceId,
         {responseType: 'text' as 'json'});
   }

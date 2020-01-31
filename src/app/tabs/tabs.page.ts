@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {UniqueDeviceID} from "@ionic-native/unique-device-id/ngx";
-import {AlertController} from "@ionic/angular";
+import {AlertController, ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'app-tabs',
@@ -17,14 +17,14 @@ export class TabsPage implements OnInit {
   private flag = false;
   private DeviceID: string;
 
-  constructor(private http: HttpClient, public alertCtrl: AlertController) {}
-  // constructor(private uniqueDeviceID: UniqueDeviceID, private http: HttpClient) {}
+  // constructor(private http: HttpClient, public alertCtrl: AlertController) {}
+  constructor(private uniqueDeviceID: UniqueDeviceID, private http: HttpClient, public alertCtrl: AlertController, public toastController: ToastController) {}
 
   login(): void{
 
     try {
       this.checkPatient(this.DeviceID).subscribe(
-          data => {this.PatientName = data; this.flag = true; console.log("log in successfully: " , this.PatientName);},
+          data => {this.PatientName = data; this.flag = true; TabsPage.username = data ; console.log("log in successfully: " , this.PatientName);},
           async error => {
             console.log('HttpClient get checkPatient error');
             this.showPrompt();
@@ -35,12 +35,18 @@ export class TabsPage implements OnInit {
     }
   }
 
-  // getuuid(): void{
-  //   // console.info(device.uuid);
-  //   this.uniqueDeviceID.get()
-  //       .then((uuid: any) => {console.log(uuid); this.DeviceID = uuid; TabsPage.deviceId = uuid})
-  //       .catch((error: any) => console.log(error));
-  // }
+  getuuid(): void{
+    // console.info(device.uuid);
+    this.uniqueDeviceID.get()
+        .then((uuid: any) => {
+          console.log(uuid);
+          this.DeviceID = uuid;
+          TabsPage.deviceId = uuid;
+          this.login();
+          TabsPage.deviceId = this.DeviceID;
+          console.log("TabsPage.uuid : " , TabsPage.deviceId);})
+        .catch((error: any) => console.log(error));
+  }
 
   checkPatient(DeviceID) {
     return this.http.get<string>(
@@ -86,7 +92,16 @@ export class TabsPage implements OnInit {
 
   signup(newName: string, uuid: string): void {
     console.log('signup : ' + newName + ' and ' + uuid);
-    this.addUser(newName, uuid).subscribe(result => {this.postFeedback = result; console.log(this.postFeedback)});
+    this.addUser(newName, uuid).subscribe(
+        result => {
+          this.postFeedback = result; console.log(this.postFeedback);
+        if(this.postFeedback == 'failed: userName exists'){
+          this.presentToast(this.postFeedback);
+          this.showPrompt();
+        }else{
+          this.presentToast('welcome, ' + newName);
+        }
+        });
   }
 
 
@@ -98,11 +113,15 @@ export class TabsPage implements OnInit {
     }
 
   ngOnInit(): void {
-    // this.getuuid();
-    this.DeviceID = '33c-hl';
-    TabsPage.deviceId = this.DeviceID;
-      this.login();
-    console.log("TabsPage.uuid : " , TabsPage.deviceId);
+    this.getuuid();
+    // this.DeviceID = '33c-hl';
   }
 
+  async presentToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 2000
+    });
+    await toast.present();
+  }
 }
